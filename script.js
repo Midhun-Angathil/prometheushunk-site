@@ -99,9 +99,15 @@ function initCarousel() {
 
 /* -------------------------------
    ARROW BUTTON SLIDE
+   FIXED: Now calculates card width dynamically
 --------------------------------*/
 function slideCarousel(direction) {
-    const cardWidth = 330; 
+    if (!carousel) return;
+    
+    // Get the actual card width from the first card
+    const firstCard = carousel.querySelector('.video-card');
+    const cardWidth = firstCard ? firstCard.offsetWidth + 25 : 345; // 320px card + 25px gap, fallback to 345
+    
     const amount = direction * cardWidth;
     carousel.scrollBy({ left: amount, behavior: "smooth" });
 }
@@ -110,6 +116,8 @@ function slideCarousel(direction) {
    AUTO-SLIDE (every 5 seconds)
 --------------------------------*/
 setInterval(() => {
+    if (!carousel) return;
+    
     const totalWidth = carousel.scrollWidth - carousel.clientWidth;
     const nearEnd = carousel.scrollLeft + 10 >= totalWidth;
 
