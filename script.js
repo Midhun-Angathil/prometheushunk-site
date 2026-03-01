@@ -1,11 +1,9 @@
-/* -------------------------------
-   CONFIG
---------------------------------*/
+/* CONFIG */
 const CHANNEL_ID = "UCtEKLjhUJ8ssiyOGT6WZW3A";
 const MAX_RESULTS = 3;
 
 /* -------------------------------
-   DYNAMIC YOUTUBE FETCH
+   FETCH LATEST VIDEOS
 --------------------------------*/
 async function loadLatestVideos() {
     const container = document.getElementById("video-container");
@@ -13,7 +11,7 @@ async function loadLatestVideos() {
 
     try {
         const response = await fetch(
-            `https://ph-gaming-system.el.r.appspot.com/?channel_id=${CHANNEL_ID}&max=${MAX_RESULTS}&t=${Date.now()}`
+            `${BACKEND_URL}?channel_id=${CHANNEL_ID}&max=${MAX_RESULTS}&t=${Date.now()}`
         );
 
         const data = await response.json();
@@ -34,8 +32,7 @@ async function loadLatestVideos() {
             card.className = "video-card";
 
             card.innerHTML = `
-                <a href="https://www.youtube.com/watch?v=${videoId}"
-                   target="_blank">
+                <a href="https://www.youtube.com/watch?v=${videoId}" target="_blank">
                     <img src="${thumb}" alt="${title}">
                 </a>
                 <p class="video-title">${title}</p>
@@ -43,9 +40,6 @@ async function loadLatestVideos() {
 
             container.appendChild(card);
         });
-
-        // Re-init carousel once videos are loaded
-        initCarousel();
 
     } catch (err) {
         console.error("YouTube fetch failed:", err);
@@ -55,75 +49,22 @@ async function loadLatestVideos() {
 }
 
 /* -------------------------------
-   CAROUSEL LOGIC
---------------------------------*/
-let carousel, isDown = false, startX, scrollLeft;
-
-function initCarousel() {
-    carousel = document.querySelector(".video-container");
-
-    if (!carousel) return;
-
-    /* --- Drag to scroll (desktop + mobile) --- */
-    carousel.addEventListener("mousedown", (e) => {
-        isDown = true;
-        startX = e.pageX - carousel.offsetLeft;
-        scrollLeft = carousel.scrollLeft;
-    });
-
-    carousel.addEventListener("mouseleave", () => (isDown = false));
-    carousel.addEventListener("mouseup", () => (isDown = false));
-
-    carousel.addEventListener("mousemove", (e) => {
-        if (!isDown) return;
-        e.preventDefault();
-        const x = e.pageX - carousel.offsetLeft;
-        const walk = (x - startX) * 1.4;
-        carousel.scrollLeft = scrollLeft - walk;
-    });
-
-    /* --- Touch Swipe (mobile) --- */
-    let touchStartX = 0;
-
-    carousel.addEventListener("touchstart", (e) => {
-        touchStartX = e.touches[0].clientX;
-    });
-
-    carousel.addEventListener("touchend", (e) => {
-        const diff = e.changedTouches[0].clientX - touchStartX;
-        if (Math.abs(diff) > 50) {
-            slideCarousel(diff > 0 ? -1 : 1);
-        }
-    });
-}
-
-/* -------------------------------
-   ARROW BUTTON SLIDE
+   SLIDE BUTTON LOGIC
 --------------------------------*/
 function slideCarousel(direction) {
-    const cardWidth = 330; 
-    const amount = direction * cardWidth;
-    carousel.scrollBy({ left: amount, behavior: "smooth" });
+    const container = document.getElementById("video-container");
+    const cardWidth = 342; // 320px thumbnail + 22px gap
+
+    container.scrollBy({
+        left: direction * cardWidth,
+        behavior: "smooth"
+    });
 }
 
-/* -------------------------------
-   AUTO-SLIDE (every 5 seconds)
---------------------------------*/
-setInterval(() => {
-    const totalWidth = carousel.scrollWidth - carousel.clientWidth;
-    const nearEnd = carousel.scrollLeft + 10 >= totalWidth;
+document.getElementById("carousel-left").addEventListener("click", () => slideCarousel(-1));
+document.getElementById("carousel-right").addEventListener("click", () => slideCarousel(1));
 
-    if (nearEnd) {
-        // return to start
-        carousel.scrollTo({ left: 0, behavior: "smooth" });
-    } else {
-        slideCarousel(1);
-    }
-}, 5000);
-
-/* -------------------------------
-   INIT
---------------------------------*/
+/* INIT */
 document.addEventListener("DOMContentLoaded", () => {
     loadLatestVideos();
 });
