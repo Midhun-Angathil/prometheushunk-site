@@ -13,7 +13,7 @@ async function loadLatestVideos() {
 
     try {
         const response = await fetch(
-            `https://ph-latest-videos-api-uc6zcdlfea-uc.a.run.app/latest?channel_id=${CHANNEL_ID}&max=${MAX_RESULTS}&t=${Date.now()}`
+            `https://ph-gaming-system.el.r.appspot.com?channel_id=${CHANNEL_ID}&max=${MAX_RESULTS}&t=${Date.now()}`
         );
 
         const data = await response.json();
