@@ -6,38 +6,37 @@
     <title>Prometheus Hunk — PlayStation Gaming</title>
     <link rel="stylesheet" href="styles.css" />
     <script defer src="config.js"></script>
-    <script defer src="script.js?v=2"></script>
+    <script defer src="script.js"></script>
 </head>
 
 <body>
 
-    <!-- GLOBAL BACKGROUND VIDEO -->
+    <!-- BACKGROUND VIDEO -->
     <video autoplay muted loop playsinline id="bg-video">
-        <source src="assets/hero-bg.mp4" type="video/mp4">
+        <source src="assets/hero_bg.mp4" type="video/mp4">
     </video>
     <div id="bg-overlay"></div>
 
-    <!-- HERO SECTION -->
+    <!-- HERO -->
     <header class="hero">
         <img src="assets/profile.png" alt="Profile" class="hero-profile" />
-
         <h1 class="hero-title">Prometheus Hunk</h1>
         <p class="hero-tagline">
             Cinematic PlayStation Gaming • Boss Fights • Stealth • Story Missions • Puzzle Solving • No Commentary
         </p>
 
         <div class="social-links">
-            <a href="https://youtube.com/@prometheushunk9295" target="_blank" class="btn yt">YouTube</a>
-            <a href="https://x.com/prometheushunk" target="_blank" class="btn x">X</a>
-            <a href="https://instagram.com/prometheushunk" target="_blank" class="btn ig">Instagram</a>
-            <a href="https://www.facebook.com/prometheushunk" target="_blank" class="btn fb">Facebook</a>
-            <a href="https://www.threads.com/@prometheushunk" target="_blank" class="btn threads">Threads</a>
-            <a href="https://t.me/prometheushunk" target="_blank" class="btn tg">Telegram</a>
-            <a href="https://pin.it/2PZ7gMAGo" target="_blank" class="btn pn">Pinterest</a>
+            <a href="https://youtube.com/@prometheushunk9295" class="btn" target="_blank">YouTube</a>
+            <a href="https://x.com/prometheushunk" class="btn" target="_blank">X</a>
+            <a href="https://instagram.com/prometheushunk" class="btn" target="_blank">Instagram</a>
+            <a href="https://facebook.com/prometheushunk" class="btn" target="_blank">Facebook</a>
+            <a href="https://threads.net/@prometheushunk" class="btn" target="_blank">Threads</a>
+            <a href="https://t.me/prometheushunk" class="btn" target="_blank">Telegram</a>
+            <a href="https://pin.it/2PZ7gMAGo" class="btn" target="_blank">Pinterest</a>
         </div>
     </header>
 
-    <!-- LATEST VIDEOS SECTION -->
+    <!-- LATEST VIDEOS -->
     <section class="videos-section">
         <h2>Latest Videos</h2>
 
@@ -45,7 +44,7 @@
             <button class="carousel-btn left" onclick="slideCarousel(-1)">❮</button>
 
             <div class="video-container" id="video-container">
-                <!-- JS injects videos here -->
+                <!-- Videos injected by JS -->
             </div>
 
             <button class="carousel-btn right" onclick="slideCarousel(1)">❯</button>
@@ -55,7 +54,7 @@
     <!-- FOOTER -->
     <footer>
         <p>© 2026 Prometheus Hunk. All rights reserved.</p>
-        <a href="privacy-policy.html">Privacy Policy</a> • 
+        <a href="privacy-policy.html">Privacy Policy</a> •
         <a href="terms-of-service.html">Terms of Service</a>
     </footer>
 

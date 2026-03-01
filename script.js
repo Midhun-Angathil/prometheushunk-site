@@ -1,19 +1,21 @@
-/* -------------------------------
+/* -----------------------------------
    CONFIG
---------------------------------*/
+-------------------------------------*/
 const CHANNEL_ID = "UCtEKLjhUJ8ssiyOGT6WZW3A";
 const MAX_RESULTS = 3;
 
-/* -------------------------------
-   DYNAMIC YOUTUBE FETCH
---------------------------------*/
+let carousel = null;
+
+/* -----------------------------------
+   FETCH YOUTUBE VIDEOS
+-------------------------------------*/
 async function loadLatestVideos() {
     const container = document.getElementById("video-container");
     container.innerHTML = "<p style='opacity:0.7;'>Loading videos...</p>";
 
     try {
         const response = await fetch(
-            `https://ph-gaming-system.el.r.appspot.com/?channel_id=${CHANNEL_ID}&max=${MAX_RESULTS}&t=${Date.now()}`
+            `${BACKEND_URL}?channel_id=${CHANNEL_ID}&max=${MAX_RESULTS}&t=${Date.now()}`
         );
 
         const data = await response.json();
@@ -25,7 +27,7 @@ async function loadLatestVideos() {
 
         container.innerHTML = "";
 
-        data.items.forEach((video) => {
+        data.items.forEach(video => {
             const videoId = video.id.videoId;
             const title = video.snippet.title;
             const thumb = video.snippet.thumbnails.high.url;
@@ -34,8 +36,7 @@ async function loadLatestVideos() {
             card.className = "video-card";
 
             card.innerHTML = `
-                <a href="https://www.youtube.com/watch?v=${videoId}"
-                   target="_blank">
+                <a href="https://www.youtube.com/watch?v=${videoId}" target="_blank">
                     <img src="${thumb}" alt="${title}">
                 </a>
                 <p class="video-title">${title}</p>
@@ -44,27 +45,28 @@ async function loadLatestVideos() {
             container.appendChild(card);
         });
 
-        // Re-init carousel once videos are loaded
-        initCarousel();
+        initCarousel(); // initialize after videos load
 
     } catch (err) {
-        console.error("YouTube fetch failed:", err);
+        console.error("Video fetch error:", err);
         container.innerHTML =
             "<p style='color:#f66;'>Failed to load videos. Try again later.</p>";
     }
 }
 
-/* -------------------------------
-   CAROUSEL LOGIC
---------------------------------*/
-let carousel, isDown = false, startX, scrollLeft;
-
+/* -----------------------------------
+   CAROUSEL BEHAVIOR
+-------------------------------------*/
 function initCarousel() {
     carousel = document.querySelector(".video-container");
 
     if (!carousel) return;
 
-    /* --- Drag to scroll (desktop + mobile) --- */
+    let isDown = false;
+    let startX;
+    let scrollLeft;
+
+    // DRAG TO SCROLL
     carousel.addEventListener("mousedown", (e) => {
         isDown = true;
         startX = e.pageX - carousel.offsetLeft;
@@ -82,7 +84,7 @@ function initCarousel() {
         carousel.scrollLeft = scrollLeft - walk;
     });
 
-    /* --- Touch Swipe (mobile) --- */
+    // TOUCH SWIPE
     let touchStartX = 0;
 
     carousel.addEventListener("touchstart", (e) => {
@@ -95,35 +97,30 @@ function initCarousel() {
             slideCarousel(diff > 0 ? -1 : 1);
         }
     });
+
+    // AUTO-SLIDE (start only after videos loaded)
+    setInterval(() => {
+        const maxScroll = carousel.scrollWidth - carousel.clientWidth;
+        const atEnd = carousel.scrollLeft + 20 >= maxScroll;
+
+        if (atEnd) {
+            carousel.scrollTo({ left: 0, behavior: "smooth" });
+        } else {
+            slideCarousel(1);
+        }
+    }, 5000);
 }
 
-/* -------------------------------
-   ARROW BUTTON SLIDE
---------------------------------*/
+/* -----------------------------------
+   ARROW BUTTONS
+-------------------------------------*/
 function slideCarousel(direction) {
-    const cardWidth = 330; 
-    const amount = direction * cardWidth;
-    carousel.scrollBy({ left: amount, behavior: "smooth" });
+    if (!carousel) return;
+    const cardWidth = 330;
+    carousel.scrollBy({ left: direction * cardWidth, behavior: "smooth" });
 }
 
-/* -------------------------------
-   AUTO-SLIDE (every 5 seconds)
---------------------------------*/
-setInterval(() => {
-    const totalWidth = carousel.scrollWidth - carousel.clientWidth;
-    const nearEnd = carousel.scrollLeft + 10 >= totalWidth;
-
-    if (nearEnd) {
-        // return to start
-        carousel.scrollTo({ left: 0, behavior: "smooth" });
-    } else {
-        slideCarousel(1);
-    }
-}, 5000);
-
-/* -------------------------------
+/* -----------------------------------
    INIT
---------------------------------*/
-document.addEventListener("DOMContentLoaded", () => {
-    loadLatestVideos();
-});
+-------------------------------------*/
+document.addEventListener("DOMContentLoaded", loadLatestVideos);
