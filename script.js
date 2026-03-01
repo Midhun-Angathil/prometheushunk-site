@@ -2,7 +2,7 @@
    CONFIG
 --------------------------------*/
 const CHANNEL_ID = "UCtEKLjhUJ8ssiyOGT6WZW3A";
-const MAX_RESULTS = 3;
+const MAX_RESULTS = 5;
 
 /* -------------------------------
    DYNAMIC YOUTUBE FETCH
