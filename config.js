@@ -1,2 +1,2 @@
-//Frontend config
-const API_ENDPOINT = "https://ph-gaming-system.uc.r.appspot.com";
+// Backend endpoint (Python App Engine)
+const BACKEND_URL = "https://ph-gaming-system.el.r.appspot.com/videos";
