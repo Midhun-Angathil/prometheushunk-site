@@ -6,7 +6,7 @@
     <title>Prometheus Hunk — PlayStation Gaming</title>
     <link rel="stylesheet" href="styles.css" />
     <script defer src="config.js"></script>
-    <script defer src="script.js?v=2"></script>
+    <script defer src="script.js"></script>
 </head>
 
 <body>
@@ -42,13 +42,13 @@
         <h2>Latest Videos</h2>
 
         <div class="video-carousel">
-            <button class="carousel-btn left" onclick="slideCarousel(-1)">❮</button>
+            <button class="carousel-btn left" id="carousel-left" onclick="slideCarousel(-1)">❮</button>
 
             <div class="video-container" id="video-container">
                 <!-- JS injects videos here -->
             </div>
 
-            <button class="carousel-btn right" onclick="slideCarousel(1)">❯</button>
+            <button class="carousel-btn right" id="carousel-right" onclick="slideCarousel(1)">❯</button>
         </div>
     </section>
 
