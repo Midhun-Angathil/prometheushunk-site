@@ -12,6 +12,7 @@ async function loadLatestVideos() {
     container.innerHTML = "<p style='opacity:0.7;'>Loading videos...</p>";
 
     try {
+        console.log("Fetching:", url);
         const response = await fetch(
             `https://ph-gaming-system.el.r.appspot.com/?channel_id=${CHANNEL_ID}&max=${MAX_RESULTS}&t=${Date.now()}`
         );
