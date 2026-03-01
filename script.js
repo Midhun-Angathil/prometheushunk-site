@@ -3,6 +3,7 @@
 --------------------------------*/
 const CHANNEL_ID = "UCtEKLjhUJ8ssiyOGT6WZW3A";
 const MAX_RESULTS = 3;
+const BACKEND_URL = "https://ph-gaming-system.el.r.appspot.com/";
 
 /* -------------------------------
    DYNAMIC YOUTUBE FETCH
@@ -13,7 +14,7 @@ async function loadLatestVideos() {
 
     try {
         const response = await fetch(
-            `https://ph-gaming-system.el.r.appspot.com/?channel_id=${CHANNEL_ID}&max=${MAX_RESULTS}&t=${Date.now()}`
+            `${BACKEND_URL}?channel_id=${CHANNEL_ID}&max=${MAX_RESULTS}&t=${Date.now()}`
         );
 
         const data = await response.json();
@@ -35,8 +36,9 @@ async function loadLatestVideos() {
 
             card.innerHTML = `
                 <a href="https://www.youtube.com/watch?v=${videoId}"
-                   target="_blank">
-                    <img src="${thumb}" alt="${title}">
+                   target="_blank"
+                   rel="noopener noreferrer">
+                    <img src="${thumb}" alt="${title}" loading="lazy">
                 </a>
                 <p class="video-title">${title}</p>
             `;
@@ -58,27 +60,41 @@ async function loadLatestVideos() {
    CAROUSEL LOGIC
 --------------------------------*/
 let carousel, isDown = false, startX, scrollLeft;
+let autoSlideInterval;
 
 function initCarousel() {
     carousel = document.querySelector(".video-container");
 
     if (!carousel) return;
 
-    /* --- Drag to scroll (desktop + mobile) --- */
+    // Clear any existing auto-slide
+    if (autoSlideInterval) {
+        clearInterval(autoSlideInterval);
+    }
+
+    /* --- Drag to scroll (desktop) --- */
     carousel.addEventListener("mousedown", (e) => {
         isDown = true;
+        carousel.style.cursor = "grabbing";
         startX = e.pageX - carousel.offsetLeft;
         scrollLeft = carousel.scrollLeft;
     });
 
-    carousel.addEventListener("mouseleave", () => (isDown = false));
-    carousel.addEventListener("mouseup", () => (isDown = false));
+    carousel.addEventListener("mouseleave", () => {
+        isDown = false;
+        carousel.style.cursor = "grab";
+    });
+    
+    carousel.addEventListener("mouseup", () => {
+        isDown = false;
+        carousel.style.cursor = "grab";
+    });
 
     carousel.addEventListener("mousemove", (e) => {
         if (!isDown) return;
         e.preventDefault();
         const x = e.pageX - carousel.offsetLeft;
-        const walk = (x - startX) * 1.4;
+        const walk = (x - startX) * 1.5;
         carousel.scrollLeft = scrollLeft - walk;
     });
 
@@ -95,35 +111,109 @@ function initCarousel() {
             slideCarousel(diff > 0 ? -1 : 1);
         }
     });
+
+    // Set cursor style
+    carousel.style.cursor = "grab";
+
+    // Start auto-slide
+    startAutoSlide();
 }
 
 /* -------------------------------
-   ARROW BUTTON SLIDE
+   ARROW BUTTON SLIDE - DYNAMIC CALCULATION
 --------------------------------*/
 function slideCarousel(direction) {
-    const cardWidth = 330; 
-    const amount = direction * cardWidth;
-    carousel.scrollBy({ left: amount, behavior: "smooth" });
+    if (!carousel) return;
+
+    // Get the first video card to calculate its width
+    const firstCard = carousel.querySelector('.video-card');
+    if (!firstCard) return;
+
+    // Calculate scroll amount: card width + gap
+    const cardWidth = firstCard.offsetWidth;
+    const gap = 25; // This matches the CSS gap
+    const scrollAmount = cardWidth + gap;
+
+    // Scroll by the calculated amount
+    carousel.scrollBy({ 
+        left: direction * scrollAmount, 
+        behavior: "smooth" 
+    });
 }
 
 /* -------------------------------
    AUTO-SLIDE (every 5 seconds)
 --------------------------------*/
-setInterval(() => {
-    const totalWidth = carousel.scrollWidth - carousel.clientWidth;
-    const nearEnd = carousel.scrollLeft + 10 >= totalWidth;
+function startAutoSlide() {
+    autoSlideInterval = setInterval(() => {
+        if (!carousel) return;
 
-    if (nearEnd) {
-        // return to start
-        carousel.scrollTo({ left: 0, behavior: "smooth" });
+        const maxScroll = carousel.scrollWidth - carousel.clientWidth;
+        const currentScroll = carousel.scrollLeft;
+        
+        // Check if we're at or near the end (within 10px)
+        if (currentScroll + 10 >= maxScroll) {
+            // Return to start
+            carousel.scrollTo({ left: 0, behavior: "smooth" });
+        } else {
+            // Slide to next
+            slideCarousel(1);
+        }
+    }, 5000);
+}
+
+/* -------------------------------
+   ARROW BUTTON VISIBILITY
+--------------------------------*/
+function updateArrowVisibility() {
+    if (!carousel) return;
+
+    const leftBtn = document.getElementById('carousel-left');
+    const rightBtn = document.getElementById('carousel-right');
+    
+    if (!leftBtn || !rightBtn) return;
+
+    const maxScroll = carousel.scrollWidth - carousel.clientWidth;
+    const currentScroll = carousel.scrollLeft;
+
+    // Hide left arrow at start
+    if (currentScroll <= 5) {
+        leftBtn.style.opacity = '0.3';
+        leftBtn.style.pointerEvents = 'none';
     } else {
-        slideCarousel(1);
+        leftBtn.style.opacity = '1';
+        leftBtn.style.pointerEvents = 'auto';
     }
-}, 5000);
+
+    // Hide right arrow at end
+    if (currentScroll + 5 >= maxScroll) {
+        rightBtn.style.opacity = '0.3';
+        rightBtn.style.pointerEvents = 'none';
+    } else {
+        rightBtn.style.opacity = '1';
+        rightBtn.style.pointerEvents = 'auto';
+    }
+}
 
 /* -------------------------------
    INIT
 --------------------------------*/
 document.addEventListener("DOMContentLoaded", () => {
     loadLatestVideos();
+    
+    // Update arrow visibility on scroll
+    const container = document.getElementById("video-container");
+    if (container) {
+        container.addEventListener('scroll', updateArrowVisibility);
+        
+        // Initial check after a brief delay to ensure content is loaded
+        setTimeout(updateArrowVisibility, 500);
+    }
+});
+
+// Update arrow visibility on window resize
+window.addEventListener('resize', () => {
+    if (carousel) {
+        updateArrowVisibility();
+    }
 });
