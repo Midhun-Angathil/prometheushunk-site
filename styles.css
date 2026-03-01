@@ -26,7 +26,7 @@ body {
 #bg-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.45);
+    background: rgba(0, 0, 0, 0.45); /* Less dark so video stays visible */
     backdrop-filter: blur(10px);
     z-index: -2;
 }
@@ -137,7 +137,6 @@ body {
     padding: 10px;
     border-radius: 12px;
     box-shadow: 0 0 12px rgba(0,0,0,0.6);
-    flex-shrink: 0;
 }
 
 .video-card img {
@@ -174,25 +173,8 @@ body {
     background: rgba(0,0,0,0.6);
 }
 
-/* Desktop positioning - outside the visible area */
-.carousel-btn.left { 
-    left: 10px; 
-}
-
-.carousel-btn.right { 
-    right: 10px; 
-}
-
-/* Desktop screens - move arrows further out */
-@media (min-width: 1200px) {
-    .carousel-btn.left { 
-        left: -50px; 
-    }
-    
-    .carousel-btn.right { 
-        right: -50px; 
-    }
-}
+.carousel-btn.left { left: 10px; }
+.carousel-btn.right { right: 10px; }
 
 /* FOOTER */
 footer {

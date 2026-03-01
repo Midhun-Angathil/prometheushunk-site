@@ -3,7 +3,6 @@
 --------------------------------*/
 const CHANNEL_ID = "UCtEKLjhUJ8ssiyOGT6WZW3A";
 const MAX_RESULTS = 3;
-const BACKEND_URL = "https://ph-gaming-system.el.r.appspot.com/";
 
 /* -------------------------------
    DYNAMIC YOUTUBE FETCH
@@ -14,7 +13,7 @@ async function loadLatestVideos() {
 
     try {
         const response = await fetch(
-            `${BACKEND_URL}?channel_id=${CHANNEL_ID}&max=${MAX_RESULTS}&t=${Date.now()}`
+            `https://ph-gaming-system.el.r.appspot.com/?channel_id=${CHANNEL_ID}&max=${MAX_RESULTS}&t=${Date.now()}`
         );
 
         const data = await response.json();
@@ -99,31 +98,18 @@ function initCarousel() {
 }
 
 /* -------------------------------
-   ARROW BUTTON SLIDE - FIXED FOR DESKTOP
+   ARROW BUTTON SLIDE
 --------------------------------*/
 function slideCarousel(direction) {
-    if (!carousel) return;
-    
-    // Get actual card width dynamically
-    const firstCard = carousel.querySelector('.video-card');
-    if (!firstCard) return;
-    
-    const cardWidth = firstCard.offsetWidth;
-    const gap = 25; // matches CSS gap
-    const scrollAmount = cardWidth + gap;
-    
-    carousel.scrollBy({ 
-        left: direction * scrollAmount, 
-        behavior: "smooth" 
-    });
+    const cardWidth = 330; 
+    const amount = direction * cardWidth;
+    carousel.scrollBy({ left: amount, behavior: "smooth" });
 }
 
 /* -------------------------------
    AUTO-SLIDE (every 5 seconds)
 --------------------------------*/
 setInterval(() => {
-    if (!carousel) return;
-    
     const totalWidth = carousel.scrollWidth - carousel.clientWidth;
     const nearEnd = carousel.scrollLeft + 10 >= totalWidth;
 
