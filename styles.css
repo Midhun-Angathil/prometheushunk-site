@@ -31,6 +31,11 @@ body {
     z-index: -2;
 }
 
+/* Background video fade effect */
+#bg-video {
+    transition: opacity 0.6s ease-in-out;
+}
+
 /* HERO SECTION */
 .hero {
     text-align: center;

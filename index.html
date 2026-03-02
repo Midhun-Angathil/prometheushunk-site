@@ -12,9 +12,7 @@
 <body>
 
     <!-- GLOBAL BACKGROUND VIDEO -->
-    <video autoplay muted loop playsinline id="bg-video">
-        <source src="assets/hero-bg.mp4" type="video/mp4">
-    </video>
+    <video autoplay muted loop playsinline id="bg-video"></video>
     <div id="bg-overlay"></div>
 
     <!-- HERO SECTION -->
@@ -23,7 +21,7 @@
 
         <h1 class="hero-title">Prometheus Hunk</h1>
         <p class="hero-tagline">
-            Cinematic PlayStation Gaming • Boss Fights • Stealth • Story Missions • Puzzle Solving
+            Cinematic PlayStation Gaming • Boss Fights • Stealth • Story Missions • No Commentary
         </p>
 
         <div class="social-links">
@@ -42,13 +40,13 @@
         <h2>Latest Videos</h2>
 
         <div class="video-carousel">
-            <button class="carousel-btn left" id="carousel-left" onclick="slideCarousel(-1)">❮</button>
+            <button class="carousel-btn left" onclick="slideCarousel(-1)">❮</button>
 
             <div class="video-container" id="video-container">
                 <!-- JS injects videos here -->
             </div>
 
-            <button class="carousel-btn right" id="carousel-right" onclick="slideCarousel(1)">❯</button>
+            <button class="carousel-btn right" onclick="slideCarousel(1)">❯</button>
         </div>
     </section>
 
