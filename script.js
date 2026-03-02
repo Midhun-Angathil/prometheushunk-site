@@ -82,6 +82,9 @@ async function loadLatestVideos() {
             container.appendChild(card);
         });
 
+        // Initialize carousel after videos are loaded
+        initCarousel();
+
     } catch (err) {
         console.error("YouTube fetch failed:", err);
         container.innerHTML =
@@ -90,16 +93,78 @@ async function loadLatestVideos() {
 }
 
 /* -----------------------------------
+   CAROUSEL LOGIC
+----------------------------------- */
+let carousel, isDown = false, startX, scrollLeft;
+
+function initCarousel() {
+    carousel = document.querySelector(".video-container");
+
+    if (!carousel) return;
+
+    /* --- Drag to scroll (desktop + mobile) --- */
+    carousel.addEventListener("mousedown", (e) => {
+        isDown = true;
+        startX = e.pageX - carousel.offsetLeft;
+        scrollLeft = carousel.scrollLeft;
+    });
+
+    carousel.addEventListener("mouseleave", () => (isDown = false));
+    carousel.addEventListener("mouseup", () => (isDown = false));
+
+    carousel.addEventListener("mousemove", (e) => {
+        if (!isDown) return;
+        e.preventDefault();
+        const x = e.pageX - carousel.offsetLeft;
+        const walk = (x - startX) * 1.4;
+        carousel.scrollLeft = scrollLeft - walk;
+    });
+
+    /* --- Touch Swipe (mobile) --- */
+    let touchStartX = 0;
+
+    carousel.addEventListener("touchstart", (e) => {
+        touchStartX = e.touches[0].clientX;
+    });
+
+    carousel.addEventListener("touchend", (e) => {
+        const diff = e.changedTouches[0].clientX - touchStartX;
+        if (Math.abs(diff) > 50) {
+            slideCarousel(diff > 0 ? -1 : 1);
+        }
+    });
+}
+
+/* -----------------------------------
    CAROUSEL ARROWS
 ----------------------------------- */
 function slideCarousel(direction) {
-    const carousel = document.querySelector(".video-container");
     if (!carousel) return;
 
-    const amount = 350 * direction;
-
+    // Get actual card width dynamically for better desktop/mobile compatibility
+    const firstCard = carousel.querySelector('.video-card');
+    const cardWidth = firstCard ? firstCard.offsetWidth + 25 : 345; // card width + gap
+    
+    const amount = direction * cardWidth;
     carousel.scrollBy({ left: amount, behavior: "smooth" });
 }
+
+/* -----------------------------------
+   AUTO-SLIDE (every 5 seconds)
+----------------------------------- */
+setInterval(() => {
+    if (!carousel) return;
+    
+    const totalWidth = carousel.scrollWidth - carousel.clientWidth;
+    const nearEnd = carousel.scrollLeft + 10 >= totalWidth;
+
+    if (nearEnd) {
+        // return to start
+        carousel.scrollTo({ left: 0, behavior: "smooth" });
+    } else {
+        slideCarousel(1);
+    }
+}, 5000);
 
 /* -----------------------------------
    INIT
